@@ -1,4 +1,5 @@
 # Para rodar o projeto:
+npm install
 nx build auth
 nx build shortify
 docker-compose up --build

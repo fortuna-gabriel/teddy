@@ -2,12 +2,6 @@ version: '3.8'
 
 services:
 services:
-  base:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    volumes:
-      - .:/app 
 
   auth:
     build:
@@ -26,11 +20,8 @@ services:
       - DB_NAME=shortify
     depends_on:
       - postgres
-      - base
     networks:
       - nx-network
-    volumes:
-      - .:/app 
 
   shortify:
     build:
@@ -49,11 +40,8 @@ services:
       - DB_NAME=shortify
     depends_on:
       - postgres
-      - base
     networks:
       - nx-network
-    volumes:
-      - .:/app 
 
   postgres:
     image: postgres:15 

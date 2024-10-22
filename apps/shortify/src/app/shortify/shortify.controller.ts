@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Headers, Res } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Headers, Res, NotFoundException } from '@nestjs/common';
 import { Response } from 'express'
 import { ShortifyService } from './shortify.service';
 import { CreateShortifyDto } from './dto/create-shortify.dto';
@@ -17,28 +17,40 @@ export class ShortifyController {
   }
 
   @Get()
-  findAll() {
-    return this.shortifyService.findAll();
+  async findAll(
+    @Headers('authorization') auth: string, 
+  ) {
+    return await this.shortifyService.findAll(auth);
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: string, @Res() response: Response) {
+  async findOne(
+    @Param('id') id: string, 
+    @Res() response: Response
+  ) {
     const shortify = await this.shortifyService.findOneByShortId(id);
     if (shortify) {
       await this.shortifyService.addClickCount(shortify.id)
       response.redirect(shortify.url);
     } else {
-      response.status(404).send('Shortify not found');
+      throw new NotFoundException;
     }
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateShortifyDto: UpdateShortifyDto) {
-    return this.shortifyService.update(+id, updateShortifyDto);
+  update(
+    @Param('id') id: string, 
+    @Body() updateShortifyDto: UpdateShortifyDto, 
+    @Headers('authorization') auth: string 
+  ) {
+    return this.shortifyService.update(+id, updateShortifyDto, auth);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.shortifyService.remove(+id);
+  remove(
+    @Param('id') id: string, 
+    @Headers('authorization') auth: string 
+  ) {
+    return this.shortifyService.remove(+id, auth);
   }
 }

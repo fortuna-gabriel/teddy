@@ -9,7 +9,7 @@ import { ShortifyModule } from './shortify/shortify.module';
   imports: [
     TypeOrmModule.forRoot({
     type: 'postgres',
-    host: 'localhost',
+    host: process.env.DB_HOST,
     port: Number(process.env.DB_PORT),
     password: process.env.DB_PASSWORD,
     username: process.env.DB_USERNAME,

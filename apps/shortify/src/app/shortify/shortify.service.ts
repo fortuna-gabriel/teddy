@@ -10,7 +10,7 @@ import { firstValueFrom } from 'rxjs';
 
 @Injectable()
 export class ShortifyService {
-  private readonly domain: string = `${process.env.DOMAIN}:${process.env.PORT}/api/shortify/`;
+  private readonly domain: string = `${process.env.DOMAIN}:3002/api/shortify/`;
 
   constructor(
     @InjectRepository(Shortify) 
@@ -38,7 +38,7 @@ export class ShortifyService {
   async getUserData(auth: string) {
     try {
       const response = await firstValueFrom(
-        this.httpService.get(`${process.env.DOMAIN}:3001/auth`, {
+        this.httpService.get(`http://auth:3000/api/auth`, {
           headers: { Authorization: auth },
         })
       );
@@ -53,9 +53,15 @@ export class ShortifyService {
   }
   async findAll(auth: string) {
     const data = await this.getUserData(auth);
-    return this.shortifyRepository.find({
-      where: { user: data.id }, 
+    const results = await this.shortifyRepository.find({
+      where: { user: data.id },
     });
+  
+
+    return results.map((result) => ({
+      ...result,
+      shortenedUrl: this.concatenate(result.shortId), 
+    }));
   }
 
 

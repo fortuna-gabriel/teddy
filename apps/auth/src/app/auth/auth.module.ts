@@ -12,6 +12,7 @@ import { UserModule } from '../user/user.module';
       signOptions: { expiresIn: '7d' }, 
     }),
   ],
+  exports: [AuthService], 
   controllers: [AuthController],
   providers: [AuthService],
 })

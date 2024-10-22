@@ -11,7 +11,7 @@ export class AuthController {
       return this.authService.create(createAuthDto);
   }
   @Get()
-  findAll(@Headers('authorization') auth?: string ) {
+  findAll(@Headers('authorization') auth: string ) {
     if (!auth) {
       throw new UnauthorizedException('Não autorizado');
     }

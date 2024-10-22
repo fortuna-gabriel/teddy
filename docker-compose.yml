@@ -1,0 +1,77 @@
+version: '3.8'
+
+services:
+services:
+  base:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/app 
+
+  auth:
+    build:
+      context: ./apps/auth
+      dockerfile: Dockerfile
+    container_name: auth
+    ports:
+      - '3001:3000'
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USERNAME=admin
+      - DB_PASSWORD=admin
+      - DB_NAME=shortify
+    depends_on:
+      - postgres
+      - base
+    networks:
+      - nx-network
+    volumes:
+      - .:/app 
+
+  shortify:
+    build:
+      context: ./apps/shortify
+      dockerfile: Dockerfile
+    container_name: shortify
+    ports:
+      - '3002:3000'
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USERNAME=admin
+      - DB_PASSWORD=admin
+      - DB_NAME=shortify
+    depends_on:
+      - postgres
+      - base
+    networks:
+      - nx-network
+    volumes:
+      - .:/app 
+
+  postgres:
+    image: postgres:15 
+    container_name: postgres
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: shortify
+    ports:
+      - '5432:5432' 
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - nx-network
+
+networks:
+  nx-network:
+    driver: bridge
+
+volumes:
+  postgres-data:

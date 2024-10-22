@@ -13,8 +13,7 @@ export class AuthService {
 
   async create(createAuthDto: CreateAuthDto) {
     const user = await this.userService.findByEmail(createAuthDto.email);
-
-    if (!this.isPasswordMatch(createAuthDto.password, user.password)) {
+    if (!await this.isPasswordMatch(createAuthDto.password, user.password)) {
       throw new UnauthorizedException('Email ou senha incorretos');
     }
 
